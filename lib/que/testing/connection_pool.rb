@@ -1,12 +1,8 @@
+require_relative "job_params"
+
 module Que
   module Testing
-    class JobParams < Struct.new(:queue, :priority, :run_at, :job_class, :args)
-    end
-
-    class Adapter < Que::Adapters::Base
-      def checkout(&block)
-      end
-
+    class ConnectionPool < Que::ConnectionPool
       def execute(command, params = [])
         return [] unless command == :insert_job
 
@@ -14,10 +10,6 @@ module Que
         klass = class_for(job.job_class)
         jobs[klass] << job
         params
-      end
-
-      def wake_worker_after_commit
-        false
       end
 
       def class_for(str)
